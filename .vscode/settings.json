@@ -1,0 +1,20 @@
+{
+    "search.exclude": {
+        "cpp-empty-test/*": true,
+        "game-controller-test/*": true,
+        "js-tests/*": true,
+        "lua-empty-test/*": true,
+        "lua-game-controller-test/*": true,
+        "lua-tests/*": true,
+        "performance-tests/*": true
+    },
+    "files.exclude": {
+        "**/cpp-empty-test": true,
+        "**/game-controller-test": true,
+        "**/js-tests": true,
+        "**/lua-empty-test": true,
+        "**/lua-game-controller-test": true,
+        "**/lua-tests": true,
+        "**/performance-tests": true
+    }
+}
