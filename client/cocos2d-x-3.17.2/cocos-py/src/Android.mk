@@ -6,8 +6,6 @@ LOCAL_MODULE := py_cocos
 
 LOCAL_MODULE_FILENAME := libpy_cocos
 
-LOCAL_ARM_MODE := arm
-
 LOCAL_SRC_FILES := \
 py_CCDirector.cpp \
 py_Cocos2d.cpp
@@ -19,8 +17,11 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH) \
 
 LOCAL_STATIC_LIBRARIES := cc_static
 
-LOCAL_STATIC_LIBRARIES := ext_python3.7m
-LOCAL_STATIC_LIBRARIES += ext_crystax
+# LOCAL_STATIC_LIBRARIES := ext_python3.7m
+# #LOCAL_STATIC_LIBRARIES += ext_crystax
+
+LOCAL_SHARED_LIBRARIES := python3.7m
+LOCAL_SHARED_LIBRARIES += crystax
 
 include $(BUILD_STATIC_LIBRARY)
 

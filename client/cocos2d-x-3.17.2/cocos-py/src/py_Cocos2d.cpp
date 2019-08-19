@@ -1,4 +1,5 @@
 #include "py_CCDirector.h"
+#include "py_Tracelog.h"
 
 namespace py_cocos2d
 {
@@ -38,13 +39,15 @@ PyObject* PyInit_pycocos2d()
 // 主循环，相当于main
 void startup()
 {
-    printf("=====python will start up=====");
-    PyImport_AppendInittab("pycocos2d",PyInit_pycocos2d);   //初始化模块
+    LOGD("=====python will start up=====");
+    int res = PyImport_AppendInittab("pycocos2d",PyInit_pycocos2d);   //初始化模块
+    LOGD("=====PyImport_AppendInittab return %d",res);
 
+    LOGD("=====python will Initialize=====");
     Py_Initialize();
     if (!Py_IsInitialized()) {
         //log
-        printf("Py_Initialize failed!");
+        LOGD("Py_Initialize failed!");
         return;
     }
 
@@ -52,7 +55,7 @@ void startup()
     PyObject *platform = PyImport_ImportModule("platform");
     PyObject *funcVersion = PyObject_GetAttrString(platform,"python_version");
     PyObject *sVer = PyUnicode_AsEncodedString(PyEval_CallObject(funcVersion,NULL),"utf-8","~E~");
-    printf("python interpreter version: %s",PyBytes_AS_STRING(sVer));
+    LOGD("python interpreter version: %s",PyBytes_AS_STRING(sVer));
 
     // 将当前路径加入解释器的搜索路径
     PyRun_SimpleString("print 'hello pycocos2d'");
@@ -63,12 +66,12 @@ void startup()
     PyObject *sys = PyImport_ImportModule("sys");
     PyObject *funcPath = PyObject_GetAttrString(sys,"path");
     PyObject *sPath = PyUnicode_AsEncodedString(PyObject_Repr(funcPath),"utf-8","~E~");
-    printf("python interpreter path: %s",PyBytes_AS_STRING(sPath));
+    LOGD("python interpreter path: %s",PyBytes_AS_STRING(sPath));
 
     // 主循环，需要提供main.py脚本
     PyObject *mMain = PyImport_ImportModule("main");
     if (!mMain) {
-        printf("err not main");
+        LOGD("err not main");
         Py_Finalize();
         return;
     }

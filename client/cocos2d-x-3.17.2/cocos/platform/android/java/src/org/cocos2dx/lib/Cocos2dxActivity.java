@@ -36,6 +36,7 @@ import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
+import android.os.PersistableBundle;
 import android.os.PowerManager;
 import android.preference.PreferenceManager.OnActivityResultListener;
 import android.util.Log;
@@ -113,6 +114,7 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
             ApplicationInfo ai = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
             Bundle bundle = ai.metaData;
             String libName = bundle.getString("android.app.lib_name");
+            Log.d(TAG,"==load lib: " + libName);
             System.loadLibrary(libName);
         } catch (Exception e) {
             e.printStackTrace();
@@ -145,6 +147,7 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
         this.mHandler = new Cocos2dxHandler(this);
         
         Cocos2dxHelper.init(this);
+        Log.d(TAG,"Cocos2dxHelper init");
         
         this.mGLContextAttrs = getGLContextAttrs();
         this.init();
@@ -198,7 +201,7 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
         this.hasFocus = hasFocus;
         resumeIfHasFocus();
     }
-    
+
     private void resumeIfHasFocus() {
         //It is possible for the app to receive the onWindowsFocusChanged(true) event
         //even though it is locked or asleep

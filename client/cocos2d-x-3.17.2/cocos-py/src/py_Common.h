@@ -10,8 +10,5 @@
 
 USING_NS_CC;
 
-#ifndef PY_DEBUG
-#define PY_DEBUG    1
-#endif
 
 #endif
