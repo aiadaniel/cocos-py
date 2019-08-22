@@ -48,6 +48,7 @@ THE SOFTWARE.
 #define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
 
 void cocos_android_app_init(JNIEnv* env) __attribute__((weak));
+void cocos_android_InitPythonPath(const char* appFilePath,const char *appLibPath) __attribute__((weak));
 
 void cocos_audioengine_focus_change(int focusChange);
 
@@ -114,6 +115,23 @@ JNIEXPORT void Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeInit(JNIEnv*  env, j
     }
     cocos2d::network::_preloadJavaDownloaderClass();
 }
+
+//add lxm for set python path
+JNIEXPORT void JNICALL Java_org_cocos2dx_lib_Cocos2dxActivity_initPythonPath(JNIEnv*  env, jobject thiz, jstring appFile,jstring appLib)
+{
+    // int appFileStrlen = env->GetStringUTFLength(appFile);
+    // int appLibStrlen = env->GetStringUTFLength(appLib);
+    // const char* appFile_ptr = env->GetStringUTFChars(appFile,NULL);
+    // const char* appLib_ptr = env->GetStringUTFChars(appLib,NULL);
+
+    std::string appFilePath = JniHelper::jstring2string(appFile);
+    std::string appLibPath = JniHelper::jstring2string(appLib);
+    cocos_android_InitPythonPath(appFilePath.c_str(),appLibPath.c_str());
+
+    // env->ReleaseStringUTFChars(appFile,appFile_ptr);
+    // env->ReleaseStringUTFChars(appLib,appLib_ptr);
+}
+
 
 JNIEXPORT jintArray Java_org_cocos2dx_lib_Cocos2dxActivity_getGLContextAttrs(JNIEnv*  env, jobject thiz)
 {

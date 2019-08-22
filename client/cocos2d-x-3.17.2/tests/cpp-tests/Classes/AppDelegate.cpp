@@ -59,12 +59,7 @@ void AppDelegate::initGLContextAttrs()
 bool AppDelegate::applicationDidFinishLaunching()
 {
 
-    LOGD("applicationDidFinishLaunching");
-
-    //尝试在此加载python核心库
-    py_cocos2d::startup();
-    LOGD("py_cocos2d::startup finished");
-
+    PLOGD("applicationDidFinishLaunching");
 
     // As an example, load config file
     // FIXME:: This should be loaded before the Director is initialized,
@@ -81,7 +76,7 @@ bool AppDelegate::applicationDidFinishLaunching()
 
     director->setDisplayStats(true);
     director->setAnimationInterval(1.0f / 60);
-    LOGD("director ok");
+    PLOGD("director ok");
 
     auto screenSize = glview->getFrameSize();
     auto designSize = Size(480, 320);

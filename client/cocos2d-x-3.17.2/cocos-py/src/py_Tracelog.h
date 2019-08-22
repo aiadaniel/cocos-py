@@ -9,14 +9,14 @@
 #ifdef ANDROID
 #include <android/log.h>
 #include <string.h>
-#define LOG_TAG "[cocos2d-py]"  
+#define LOGTAG "[cocos2d-py]"  
 #define LOG_LEVEL 5 //置零关闭所有日志
 
 #if LOG_LEVEL > 3
-#define LOGD(format,args...) \
-    __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "[%.10s(%03d)]:" format"\n",__FILE__+strlen(__FILE__)-10,__LINE__, ##args);
+#define PLOGD(format,args...) \
+    __android_log_print(ANDROID_LOG_DEBUG, LOGTAG, "[%.10s(%03d)]:" format"\n",__FILE__+strlen(__FILE__)-10,__LINE__, ##args);
 #else
-#define LOGD(format,args...)
+#define PLOGD(format,args...)
 #endif
 
 //总写，目前写法通不过

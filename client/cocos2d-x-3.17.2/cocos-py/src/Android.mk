@@ -12,18 +12,17 @@ py_Cocos2d.cpp
 
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH) \
-                    $(LOCAL_PATH)/../python3.7.4/include \
+                    $(LOCAL_PATH)/../python/include/python3.7m \
 					$(LOCAL_PATH)/../../cocos
 
 LOCAL_STATIC_LIBRARIES := cc_static
 
 # LOCAL_STATIC_LIBRARIES := ext_python3.7m
 # #LOCAL_STATIC_LIBRARIES += ext_crystax
-
 LOCAL_SHARED_LIBRARIES := python3.7m
-LOCAL_SHARED_LIBRARIES += crystax
+# LOCAL_SHARED_LIBRARIES += crystax
 
 include $(BUILD_STATIC_LIBRARY)
 
 $(call import-module, cocos)
-$(call import-module, python3.7.4)
+$(call import-module, cocos-py/python)

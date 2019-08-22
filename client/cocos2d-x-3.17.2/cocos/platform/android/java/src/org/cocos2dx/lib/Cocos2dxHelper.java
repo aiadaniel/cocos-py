@@ -204,6 +204,7 @@ public class Cocos2dxHelper {
             else
                 Cocos2dxHelper.sAssetsPath = Cocos2dxHelper.sActivity.getApplicationInfo().sourceDir;
         }
+        Log.d(TAG,"Cocos2dxHelper assetsPath:"+Cocos2dxHelper.sAssetsPath);
         
         return Cocos2dxHelper.sAssetsPath;
     }

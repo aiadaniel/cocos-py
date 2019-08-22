@@ -25,11 +25,16 @@ LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH) \
                     $(LOCAL_PATH)/.. \
-                    $(LOCAL_PATH)/../..
+                    $(LOCAL_PATH)/../.. \
+                    $(LOCAL_PATH)/../../../cocos-py/src
 
 LOCAL_EXPORT_LDLIBS := -lGLESv2 \
                        -lEGL \
                        -llog \
                        -landroid
 
+# LOCAL_STATIC_LIBRARIES := py_cocos
+
 include $(BUILD_STATIC_LIBRARY)
+
+# $(call import-module, cocos-py/src)

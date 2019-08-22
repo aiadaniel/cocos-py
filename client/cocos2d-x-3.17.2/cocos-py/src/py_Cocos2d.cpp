@@ -1,8 +1,15 @@
 #include "py_CCDirector.h"
 #include "py_Tracelog.h"
+#include "cocos2d.h"
+
+#include <stdio.h>
+#include <string.h>
 
 namespace py_cocos2d
 {
+
+char appLibPath[256];
+char appFilePath[256];
 
 static PyMethodDef module_methods[] = {
     {NULL,NULL,0,NULL},
@@ -15,6 +22,12 @@ static PyModuleDef cocos_moduledef = {
     -1,                         /* m_size */
     module_methods,             /* m_methods */
 };
+
+void setScriptPath(const char *appFile,const char *appLib)
+{
+    strcpy(appFilePath,appFile);
+    strcpy(appLibPath,appLib);
+}
 
 PyObject* PyInit_pycocos2d()
 {
@@ -36,47 +49,81 @@ PyObject* PyInit_pycocos2d()
     return module;
 }
 
+#define TEMP_DEBUG
+#ifdef TEMP_DEBUG
+#define DDD PLOGD("==================================================");
+#endif
+
 // 主循环，相当于main
 void startup()
 {
-    LOGD("=====python will start up=====");
+    /* see doc: https://docs.python.org/3.7/c-api/init.html#pre-init-safe */
+    PLOGD("=====python will start up=====");
     int res = PyImport_AppendInittab("pycocos2d",PyInit_pycocos2d);   //初始化模块
-    LOGD("=====PyImport_AppendInittab return %d",res);
+    PLOGD("=====PyImport_AppendInittab return %d",res);
 
-    LOGD("=====python will Initialize=====");
+    // 尝试一：java层把python3.7.MP3解压到appFile文件夹下
+    const char *fullPythonPath = appFilePath;
+        //cocos2d::FileUtils::getInstance()->fullPathForFilename("python3.7.MP3").c_str();// assets/python3.7.MP3
+    unsigned int len = 0;
+    wchar_t *homePath = Py_DecodeLocale(fullPythonPath,&len);
+    PLOGD("=====fullpythonpath: %s    len: %d",fullPythonPath,len);
+    //Py_SetPythonHome(homePath);//把python3.7.zip脚本文件路径设置进去
+    Py_SetPath(homePath);
+
+    PLOGD("=====python will Initialize=====");
     Py_Initialize();
     if (!Py_IsInitialized()) {
         //log
-        LOGD("Py_Initialize failed!");
+        PLOGD("=====Py_Initialize failed!");
         return;
     }
-
-    // 获取python解释器版本号
-    PyObject *platform = PyImport_ImportModule("platform");
-    PyObject *funcVersion = PyObject_GetAttrString(platform,"python_version");
-    PyObject *sVer = PyUnicode_AsEncodedString(PyEval_CallObject(funcVersion,NULL),"utf-8","~E~");
-    LOGD("python interpreter version: %s",PyBytes_AS_STRING(sVer));
+    PLOGD("=====python Initialize ok=====");
 
     // 将当前路径加入解释器的搜索路径
     PyRun_SimpleString("print 'hello pycocos2d'");
+    DDD
     PyRun_SimpleString("import sys");
-    PyRun_SimpleString("sys.path.append('./')");
+    DDD
+
+    // 获取python解释器版本号
+    PyObject *platform = PyImport_ImportModule("platform");
+    DDD
+    if (platform != nullptr) {
+        PyObject *funcVersion = PyObject_GetAttrString(platform,"python_version");
+        DDD
+        PyObject *sVer = PyUnicode_AsEncodedString(PyEval_CallObject(funcVersion,NULL),"utf-8","~E~");
+        PLOGD("=====python interpreter version: %s",PyBytes_AS_STRING(sVer));
+    } else {
+        PLOGD("=====import platform not found");
+    }
+
+    // char dest[256];
+    // sprintf(dest,"sys.path.append('%s%s')", appFilePath,"/pyscripts");
+    // PLOGD("=====sys.path %s",dest);
+    // PyRun_SimpleString(dest);
+    // DDD
 
     // 获取python解释器搜索路径
     PyObject *sys = PyImport_ImportModule("sys");
+    DDD
     PyObject *funcPath = PyObject_GetAttrString(sys,"path");
+    DDD
     PyObject *sPath = PyUnicode_AsEncodedString(PyObject_Repr(funcPath),"utf-8","~E~");
-    LOGD("python interpreter path: %s",PyBytes_AS_STRING(sPath));
+    PLOGD("=====python interpreter path: %s",PyBytes_AS_STRING(sPath));
 
     // 主循环，需要提供main.py脚本
     PyObject *mMain = PyImport_ImportModule("main");
     if (!mMain) {
-        LOGD("err not main");
+        PLOGD("=====err not main");
         Py_Finalize();
         return;
     }
+    DDD
     PyRun_SimpleString("import main");
+    DDD
     PyRun_SimpleString("main.bootstrap()");
+    DDD
 }
 
     

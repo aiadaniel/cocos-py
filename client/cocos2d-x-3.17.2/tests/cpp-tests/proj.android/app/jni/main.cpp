@@ -28,6 +28,7 @@
 #include <jni.h>
 
 #include "AppDelegate.h"
+#include "py_Cocos2d.h"
 
 #define  LOG_TAG    "main"
 #define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
@@ -39,4 +40,13 @@ std::unique_ptr<AppDelegate> appDelegate;
 void cocos_android_app_init(JNIEnv* env) {
     LOGD("cocos_android_app_init");
     appDelegate.reset(new AppDelegate());
+}
+
+void cocos_android_InitPythonPath(const char* appFilePath,const char *appLibPath) {
+        //尝试在此加载python核心库
+    // "/data/user/0/org.cocos2dx.cpp_tests/files"
+    // "/data/app/org.cocos2dx.cpp_tests-jQQA-czDIh2HcWaGK4SMtw==/lib/arm"
+    py_cocos2d::setScriptPath(appFilePath,appLibPath);
+    py_cocos2d::startup();
+    LOGD("py_cocos2d::startup finished");
 }

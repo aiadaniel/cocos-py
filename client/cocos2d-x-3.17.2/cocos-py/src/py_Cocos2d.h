@@ -6,6 +6,7 @@
 namespace py_cocos2d
 {
 
+void setScriptPath(const char *appFile, const char *appLib);
 void startup(); 
 }
 

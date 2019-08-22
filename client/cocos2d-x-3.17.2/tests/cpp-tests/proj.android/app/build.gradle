@@ -115,9 +115,21 @@ android.applicationVariants.all { variant ->
     delete "${buildDir}/intermediates/assets/${variant.dirName}"
     variant.mergeAssets.doLast {
         copy {
-           from "${buildDir}/../../../Resources"
-           into "${buildDir}/intermediates/assets/${variant.dirName}"
-           exclude "**/*.gz"
+            from "${buildDir}/../../../Resources"
+            into "${buildDir}/intermediates/assets/${variant.dirName}"
+            exclude "**/*.gz"
+        }
+        copy {
+            from "${buildDir}/../../../../../cocos-py/python/python3.7m.MP3"
+            into "${buildDir}/intermediates/assets/${variant.dirName}"
+        }
+        copy {
+            from "${buildDir}/../../../../../cocos-py/python/lib-dynload"
+            into "${buildDir}/intermediates/assets/${variant.dirName}/pylib-dynload"
+        }
+        copy {
+            from "${buildDir}/../../../../../cocos-py/src/pyscripts"
+            into "${buildDir}/intermediates/assets/${variant.dirName}/pyscripts"
         }
     }
 
