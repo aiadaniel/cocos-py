@@ -40,10 +40,10 @@ PyObject* PyInit_pycocos2d()
 
     Py_INCREF(&PyDirectorType);
 
-    PyModule_AddObject(module,"CDirector",(PyObject*)&PyDirectorType);
+    PyModule_AddObject(module,"PyDirector",(PyObject*)&PyDirectorType);
 
     PyModule_AddIntConstant(module,"PYSUCCESS",1);
-    PyModule_AddIntConstant(module,"PYFAIL",1);
+    PyModule_AddIntConstant(module,"PYFAIL",0);
     //其他查看api
 
     return module;
@@ -62,13 +62,16 @@ void startup()
     int res = PyImport_AppendInittab("pycocos2d",PyInit_pycocos2d);   //初始化模块
     PLOGD("=====PyImport_AppendInittab return %d",res);
 
-    // 尝试一：java层把python3.7.MP3解压到appFile文件夹下
+    // 尝试一：java层把python3.7m.MP3解压到appFile文件夹下
+    //char dest[256];
+    //sprintf(dest,"%s/%s", appFilePath,"python3.7m.zip");
     const char *fullPythonPath = appFilePath;
-        //cocos2d::FileUtils::getInstance()->fullPathForFilename("python3.7.MP3").c_str();// assets/python3.7.MP3
+        //cocos2d::FileUtils::getInstance()->fullPathForFilename("python3.7m.MP3").c_str();// assets/python3.7.MP3
+        //dest; 
     unsigned int len = 0;
     wchar_t *homePath = Py_DecodeLocale(fullPythonPath,&len);
     PLOGD("=====fullpythonpath: %s    len: %d",fullPythonPath,len);
-    //Py_SetPythonHome(homePath);//把python3.7.zip脚本文件路径设置进去
+    //Py_SetPythonHome(homePath);//把python3.7m.MP3脚本文件路径设置进去
     Py_SetPath(homePath);
 
     PLOGD("=====python will Initialize=====");
@@ -85,6 +88,24 @@ void startup()
     DDD
     PyRun_SimpleString("import sys");
     DDD
+    char dest[256];
+    sprintf(dest,"sys.path.append('%s/%s')", appFilePath,"site-packages");// "pyscripts"
+    PLOGD("=====sys.path %s",dest);
+    PyRun_SimpleString(dest);
+    DDD
+    sprintf(dest,"sys.path.append('%s/%s')", appFilePath,"pylib-dynload");// "pyscripts"
+    PLOGD("=====sys.path %s",dest);
+    PyRun_SimpleString(dest);
+    DDD
+    sprintf(dest,"sys.path.append('%s/%s')", appFilePath,"pyscripts");// "pyscripts"
+    PLOGD("=====sys.path %s",dest);
+    PyRun_SimpleString(dest);
+    DDD
+    wchar_t* pythonHome = Py_GetProgramFullPath();//Py_GetPythonHome();
+    if (pythonHome != nullptr) {
+        char* pythonHomeStr = Py_EncodeLocale(pythonHome,NULL);
+        PLOGD("=====python home: %s",pythonHomeStr);
+    }
 
     // 获取python解释器版本号
     PyObject *platform = PyImport_ImportModule("platform");
@@ -97,12 +118,6 @@ void startup()
     } else {
         PLOGD("=====import platform not found");
     }
-
-    // char dest[256];
-    // sprintf(dest,"sys.path.append('%s%s')", appFilePath,"/pyscripts");
-    // PLOGD("=====sys.path %s",dest);
-    // PyRun_SimpleString(dest);
-    // DDD
 
     // 获取python解释器搜索路径
     PyObject *sys = PyImport_ImportModule("sys");

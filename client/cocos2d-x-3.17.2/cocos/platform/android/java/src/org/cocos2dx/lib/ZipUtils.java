@@ -34,7 +34,7 @@ public class ZipUtils {
         return true;
     }
 
-    private static boolean CreatePath(String paramString) {
+    public static boolean CreatePath(String paramString) {
         File localFile = new File(paramString);
         if (!localFile.exists()) {
             int i = paramString.lastIndexOf(File.separator.charAt(0));

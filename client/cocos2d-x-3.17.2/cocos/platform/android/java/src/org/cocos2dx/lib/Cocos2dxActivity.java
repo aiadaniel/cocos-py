@@ -177,9 +177,11 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
 
             @Override
             public void run() {
-                loadPy(appFile, appLib);
+                String path = appFile.getAbsolutePath() + File.separator + "lib";
+                ZipUtils.CreatePath(path);
+                loadPy(path, appLib);
                 //lxm add 等待init完成在开启
-                initPythonPath(appFile.getAbsolutePath(), appLib);//startup pycocos
+                initPythonPath(path, appLib);//startup pycocos
             }
         });
 
@@ -214,14 +216,18 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
         }
     }
 
-    void loadPy(File appFile, String appLib) {
-        //拷贝Python相关环境
-        String pyzipName = "python3.7m.MP3";
-        String soPathPrefix = "pylib-dynload" + File.separator;
-        File pythonLibFile = new File(appFile, pyzipName);
+    void loadPy(String appFilepath, String appLib) {
+        // 拷贝Python相关环境
+        // python3.7m.zip => lib
+        // pylib-dynload/ => lib
+        // pyscripts/ => lib
+        ZipUtils.CreatePath(appFilepath+File.separator+"pylib-dynload");
+        ZipUtils.CreatePath(appFilepath+File.separator+"pyscripts");
+        String pyzipName = "python3.7m.zip";
+        File pythonLibFile = new File(appFilepath, pyzipName);
 
         String[] sos = new String[0];
-        String[] scripts = new String[0];
+        String[] scripts;
         try {
             sos = getAssets().list("pylib-dynload");
 //            sos = new String[]{
@@ -231,32 +237,24 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
 //                    "zlib.cpython-37m.so"};
             //Log.d(TAG,"=====sos: " + Arrays.toString(sos));
             //if (!pythonLibFile.exists()) {
-                copyFile(this, pyzipName,"");
-                for (String item : sos) {
-                    copyFile(this, item, soPathPrefix);
-                }
+            copyFile(appFilepath, pyzipName);
+            for (String item : sos) {
+                copyFile(appFilepath, "pylib-dynload" + File.separator + item);
+            }
             //}
-
-                scripts = getAssets().list("pyscripts");
-                for (String item: scripts) {
-                    copyFile(this, item, "pyscripts"+File.separator);
-                }
+            scripts = getAssets().list("pyscripts");
+            for (String item : scripts) {
+                copyFile(appFilepath, "pyscripts" + File.separator + item);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-
-
-        // 拷贝Python 代码，放在assets目录的
-        //copyFile(this, "calljava.py");
-        //copyFile(this, "test.py");
-
         try {
             // 加载Python解释器（当前在cocos2d内部引用会自动加载？）
-            //System.load(appLib + File.separator + "libpython3.7m.so");
-
+            System.loadLibrary("python3.7m");
             for (String item : sos) {
-                System.load(appFile.getAbsolutePath() + File.separator + soPathPrefix + item);
+                System.load(appFilepath + File.separator +"pylib-dynload" + File.separator + item);
             }
 
             // 除了将代码直接拷贝，还支持将代码压缩为zip包，通过Install方法解压到指定路径
@@ -266,10 +264,15 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
             //TODO python的sys.path.insert支持直接使用zip文件，无须解压；这里解压自己的代码
             // 此处先尝试把python脚本解压到/data/data/.../files文件夹
             // 由于assets文件大小限制，出现压缩包仅有部分被解压，应该是安装包大小超过50m分包的缘故
-            InputStream dataSource = new FileInputStream(pythonLibFile);//getAssets().open("python3.7m.MP3");
+            InputStream dataSource = new FileInputStream(pythonLibFile);//getAssets().open("python3.7m.zip");
             Log.d(TAG, "=====libpython size: " + dataSource.available());
             // 由于异步解压加载的原因，这里尚未解压完成，底层python开始调用出现找不到的问题
-            ZipUtils.Install(dataSource, appFile.getAbsolutePath(), true);
+            // 直接使用zip作为搜索路径，无须解压，但编译需要zlib   类似：
+            // '/usr/local/python3.6/lib/python3.6.zip',
+            // '/usr/local/python3.6/lib/python3.6',
+            // '/usr/local/python3.6/lib/python3.6/lib-dynload',
+            // '/usr/local/python3.6/lib/python3.6/site-packages'
+            ZipUtils.Install(dataSource, appFilepath, true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -308,24 +311,16 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
 //		Service._DoFile("python", appFile.getPath() + "/calljava.py", "");
     }
 
-    private void copyFile(Context c, String Name, String prefix) {
-        File outfile = null;
-        if ("".equals(prefix)) {
-            outfile = new File(c.getFilesDir(), Name);
-        } else {
-            String dir = c.getFilesDir().getAbsolutePath()+File.separator + prefix;
-            File dirFile = new File(dir);
-            dirFile.mkdir();
-            outfile = new File(dir + Name);
-        }
+    private void copyFile(String path, String Name) {
+        File outfile = new File(path, Name);
         Log.d(TAG, "=====copy file: " + outfile.getAbsolutePath());
         BufferedOutputStream outStream = null;
         BufferedInputStream inStream = null;
 
         try {
             outStream = new BufferedOutputStream(new FileOutputStream(outfile));
-            InputStream is = c.getAssets().open(prefix+Name);
-            Log.e(TAG,"=====so size " + is.available());
+            InputStream is = getAssets().open(Name);
+            Log.e(TAG, "=====so size " + is.available());
             inStream = new BufferedInputStream(is);
 
             byte[] buffer = new byte[1024 * 10];

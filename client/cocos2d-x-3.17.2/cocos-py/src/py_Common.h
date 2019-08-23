@@ -8,6 +8,8 @@
 
 #include "cocos2d.h"
 
+#include "py_Tracelog.h"
+
 USING_NS_CC;
 
 

@@ -120,7 +120,7 @@ android.applicationVariants.all { variant ->
             exclude "**/*.gz"
         }
         copy {
-            from "${buildDir}/../../../../../cocos-py/python/python3.7m.MP3"
+            from "${buildDir}/../../../../../cocos-py/python/python3.7m.zip"
             into "${buildDir}/intermediates/assets/${variant.dirName}"
         }
         copy {

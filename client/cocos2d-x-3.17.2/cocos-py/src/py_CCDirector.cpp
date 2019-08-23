@@ -6,15 +6,25 @@ namespace py_cocos2d
 
 void PyDirector_holder(PyDirector *self,PyObject *args)
 {
-
+#ifdef PY_DEBUG
+    PLOGD("================JUST A HOLDPLACE==================");
+#endif
 } 
 
+void PyDirector_setDisplayStats(PyDirector *self,PyObject *args) 
+{
+    PLOGD("================JUST A HOLDPLACE==================");
+    // TODO parse args
+    ((Director*)self->ob_body)->setDisplayStats(false);
+}
 
 //=================================================================
 
 PyObject* PyDirector_New(PyTypeObject *type,PyObject *args,PyObject *kwds)
 {
     // to parse args and kwds here
+
+    PLOGD("=====PyDirector new Director");
 
     PyDirector *self = nullptr;
     self = (PyDirector*)type->tp_alloc(type, 0);
@@ -26,7 +36,7 @@ PyObject* PyDirector_New(PyTypeObject *type,PyObject *args,PyObject *kwds)
     // add init your class here
     self->ob_body = Director::getInstance();
 #ifdef PY_DEBUG
-    printf("PyDirector new Director %p\n",self->ob_body);
+    PLOGD("PyDirector new Director %p",self->ob_body);
 #endif
 
     Py_INCREF(self);
@@ -48,6 +58,7 @@ void PyDirector_Dealloc(PyDirector *self)
 
 //=================================================================
 PyMethodDef PyDirector_methods[] = {
+    {"setDisplayStats",(PyCFunction)PyDirector_setDisplayStats,METH_VARARGS,"setDisplayStats"},
     {"holder",(PyCFunction)PyDirector_holder,METH_VARARGS,"place holder"},
     {NULL,NULL,0,NULL},
 };

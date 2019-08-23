@@ -14,7 +14,7 @@
 
 #if LOG_LEVEL > 3
 #define PLOGD(format,args...) \
-    __android_log_print(ANDROID_LOG_DEBUG, LOGTAG, "[%.10s(%03d)]:" format"\n",__FILE__+strlen(__FILE__)-10,__LINE__, ##args);
+    __android_log_print(ANDROID_LOG_DEBUG, LOGTAG, "[%.10s(%03d)]:=====" format"\n",__FILE__+strlen(__FILE__)-10,__LINE__, ##args);
 #else
 #define PLOGD(format,args...)
 #endif
