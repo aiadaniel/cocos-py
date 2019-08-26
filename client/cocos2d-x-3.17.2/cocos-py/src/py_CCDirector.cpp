@@ -4,18 +4,29 @@
 namespace py_cocos2d
 {
 
-void PyDirector_holder(PyDirector *self,PyObject *args)
+PyObject* PyDirector_holder(PyDirector *self)
 {
 #ifdef PY_DEBUG
     PLOGD("================JUST A HOLDPLACE==================");
 #endif
+    Py_RETURN_NONE;
 } 
 
-void PyDirector_setDisplayStats(PyDirector *self,PyObject *args) 
+PyObject* PyDirector_setDisplayStats(PyDirector *self,PyObject *args) 
 {
     PLOGD("================JUST A HOLDPLACE==================");
-    // TODO parse args
-    ((Director*)self->ob_body)->setDisplayStats(false);
+    // @see py_Common.h
+    int display = true;
+    if (!PyArg_ParseTuple(args,"p",&display)) {
+        return NULL;
+    }
+
+    // ((Director*)self->ob_body)->setDisplayStats(display);
+    cocos2d::Director *dr = dynamic_cast<cocos2d::Director*>(self->ob_body);//
+    if (dr != nullptr)
+        dr->setDisplayStats(display);
+
+    Py_RETURN_NONE;
 }
 
 //=================================================================
@@ -26,7 +37,7 @@ PyObject* PyDirector_New(PyTypeObject *type,PyObject *args,PyObject *kwds)
 
     PLOGD("=====PyDirector new Director");
 
-    PyDirector *self = nullptr;
+    PyDirector *self;
     self = (PyDirector*)type->tp_alloc(type, 0);
     if (!self) {
         PyErr_Format(PyExc_RuntimeError,"alloc PyDirector failed!");
@@ -34,21 +45,23 @@ PyObject* PyDirector_New(PyTypeObject *type,PyObject *args,PyObject *kwds)
         return Py_None;
     }
     // add init your class here
-    self->ob_body = Director::getInstance();
+    self->ob_body = (Director::getInstance());//dynamic_cast<cocos2d::Ref*>
 #ifdef PY_DEBUG
     PLOGD("PyDirector new Director %p",self->ob_body);
 #endif
 
-    Py_INCREF(self);
+    //Py_INCREF(self);
     return (PyObject*)self;
 }
 
 void PyDirector_Dealloc(PyDirector *self) 
 {
+    PLOGD("=====PyDirector Dealloc");
     //add your delete here
     delete self->ob_body;
-
+    PLOGD("=====PyDirector Dealloc");
     self->ob_base.ob_type->tp_free(self);
+    PLOGD("=====PyDirector Dealloc");
 }
 
 // int PyDirector_Init(PyObject *self,PyObject *args,PyObject *kwds)
@@ -59,13 +72,13 @@ void PyDirector_Dealloc(PyDirector *self)
 //=================================================================
 PyMethodDef PyDirector_methods[] = {
     {"setDisplayStats",(PyCFunction)PyDirector_setDisplayStats,METH_VARARGS,"setDisplayStats"},
-    {"holder",(PyCFunction)PyDirector_holder,METH_VARARGS,"place holder"},
-    {NULL,NULL,0,NULL},
+    {"holder",(PyCFunction)PyDirector_holder,METH_NOARGS,"place holder"},
+    {NULL,NULL,0,NULL}
 };
 
 PyTypeObject PyDirectorType = {         \
     PyVarObject_HEAD_INIT(NULL,0)       /* py2: PyObject_HEAD_INIT(NULL) */\
-    "PyDirector",                       /* tp_name */\
+    "CDirector",                       /* tp_name */\
     sizeof(PyDirector),                 /* tp_basicsize */\
     0,                                  /* tp_itemsize */\
     

@@ -23,6 +23,7 @@
         "random": "cpp",
         "future": "cpp",
         "optional": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "iostream": "cpp"
     }
 }

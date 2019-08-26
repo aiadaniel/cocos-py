@@ -40,7 +40,7 @@ PyObject* PyInit_pycocos2d()
 
     Py_INCREF(&PyDirectorType);
 
-    PyModule_AddObject(module,"PyDirector",(PyObject*)&PyDirectorType);
+    PyModule_AddObject(module,"CDirector",(PyObject*)&PyDirectorType);
 
     PyModule_AddIntConstant(module,"PYSUCCESS",1);
     PyModule_AddIntConstant(module,"PYFAIL",0);
