@@ -1,90 +1,107 @@
 
-#include "py_CCDirector.h"
+#include "py_Grabber.h"
+//cocos头文件
+#include "2d/CCGrabber.h"
 
 namespace py_cocos2d
 {
 
-PyObject* PyDirector_holder(PyDirector *self)
+PyObject* PyGrabber_holder(PyGrabber *self)
 {
-#ifdef PY_DEBUG
-    PLOGD("================JUST A HOLDPLACE==================");
-#endif
+    PLOGD("================PyGrabber HOLDPLACE==================");
     Py_RETURN_NONE;
-} 
+}
 
-PyObject* PyDirector_setDisplayStats(PyDirector *self,PyObject *args) 
+//// void afterRender(Texture2D *texture)
+PyObject* PyGrabber_afterRender(PyGrabber *self,PyObject *args)
 {
-    PLOGD("================JUST A HOLDPLACE==================");
     // @see py_Common.h
-    int display = true;
-    if (!PyArg_ParseTuple(args,"p",&display)) {
-        return NULL;
-    }
+    // parse args here
 
-    // ((Director*)self->ob_body)->setDisplayStats(display);
-    cocos2d::Director *dr = dynamic_cast<cocos2d::Director*>(self->ob_body);//
-    if (dr != nullptr)
-        dr->setDisplayStats(display);
+    cocos2d::Grabber *dr = dynamic_cast<cocos2d::Grabber*>(self->ob_body);
+    // add your code here
 
     Py_RETURN_NONE;
 }
 
+//// void grab(Texture2D *texture)
+PyObject* PyGrabber_grab(PyGrabber *self,PyObject *args)
+{
+    // @see py_Common.h
+    // parse args here
+
+    cocos2d::Grabber *dr = dynamic_cast<cocos2d::Grabber*>(self->ob_body);
+    // add your code here
+
+    Py_RETURN_NONE;
+}
+
+//// void beforeRender(Texture2D *texture)
+PyObject* PyGrabber_beforeRender(PyGrabber *self,PyObject *args)
+{
+    // @see py_Common.h
+    // parse args here
+
+    cocos2d::Grabber *dr = dynamic_cast<cocos2d::Grabber*>(self->ob_body);
+    // add your code here
+
+    Py_RETURN_NONE;
+}
+
+
+
 //=================================================================
 
-PyObject* PyDirector_New(PyTypeObject *type,PyObject *args,PyObject *kwds)
+PyObject* PyGrabber_New(PyTypeObject *type,PyObject *args,PyObject *kwds)
 {
     // to parse args and kwds here
 
-    PLOGD("=====PyDirector new Director");
+    PLOGD("=====PyGrabber new Grabber");
 
-    PyDirector *self;
-    self = (PyDirector*)type->tp_alloc(type, 0);
+    PyGrabber *self;
+    self = (PyGrabber*)type->tp_alloc(type, 0);
     if (!self) {
-        PyErr_Format(PyExc_RuntimeError,"alloc PyDirector failed!");
+        PyErr_Format(PyExc_RuntimeError,"alloc PyGrabber failed!");
         Py_INCREF(Py_None);
         return Py_None;
     }
     // add init your class here
-    self->ob_body = (Director::getInstance());//dynamic_cast<cocos2d::Ref*>
-#ifdef PY_DEBUG
-    PLOGD("PyDirector new Director %p",self->ob_body);
-#endif
+    //self->ob_body = (Grabber::getInstance());//dynamic_cast<cocos2d::Ref*>
+    PLOGD("PyGrabber new Grabber %p",self->ob_body);
 
-    //Py_INCREF(self);
     return (PyObject*)self;
 }
 
-void PyDirector_Dealloc(PyDirector *self) 
+void PyGrabber_Dealloc(PyGrabber *self)
 {
-    PLOGD("=====PyDirector Dealloc");
+    PLOGD("=====PyGrabber Dealloc");
     //add your delete here
-    //delete self->ob_body;//TODO 暂时去掉，pyhon层应该是全局变量
-    PLOGD("=====PyDirector Dealloc");
-    //self->ob_base.ob_type->tp_free(self);//暂时
-    PLOGD("=====PyDirector Dealloc");
+    delete self->ob_body;
+    self->ob_base.ob_type->tp_free(self);
 }
 
-// int PyDirector_Init(PyObject *self,PyObject *args,PyObject *kwds)
+// int PyGrabber_Init(PyObject *self,PyObject *args,PyObject *kwds)
 // {
 //     return 0;
 // }
 
 //=================================================================
-PyMethodDef PyDirector_methods[] = {
-    {"setDisplayStats",(PyCFunction)PyDirector_setDisplayStats,METH_VARARGS,"setDisplayStats"},
-    {"holder",(PyCFunction)PyDirector_holder,METH_NOARGS,"place holder"},
-    {NULL,NULL,0,NULL}
+PyMethodDef PyGrabber_methods[] = {
+	{"afterRender",(PyCFunction)PyGrabber_afterRender,METH_VARARGS,""},
+	{"grab",(PyCFunction)PyGrabber_grab,METH_VARARGS,""},
+	{"beforeRender",(PyCFunction)PyGrabber_beforeRender,METH_VARARGS,""},
+	{NULL,NULL,0,NULL}
 };
 
-PyTypeObject PyDirectorType = {         \
+PyTypeObject PyGrabberType = {         \
     PyVarObject_HEAD_INIT(NULL,0)       /* py2: PyObject_HEAD_INIT(NULL) */\
-    "CDirector",                       /* tp_name */\
-    sizeof(PyDirector),                 /* tp_basicsize */\
+    "CGrabber",                       /* tp_name */\
+    sizeof(PyGrabber),                 /* tp_basicsize */\
     0,                                  /* tp_itemsize */\
-    
+
     /* Methods to implement standard operations */
 
-    (destructor)(PyDirector_Dealloc),        /* destructor tp_dealloc;*/\
+    (destructor)(PyGrabber_Dealloc),        /* destructor tp_dealloc;*/\
     0,                                  /* printfunc tp_print;*/\
     0,                                  /* getattrfunc tp_getattr;*/\
     0,                                  /* setattrfunc tp_setattr; */\
@@ -133,7 +150,7 @@ PyTypeObject PyDirectorType = {         \
     0,                                  /* iternextfunc tp_iternext; */\
 
     /* Attribute descriptor and subclassing stuff */
-    PyDirector_methods,                 /* struct PyMethodDef *tp_methods; */\
+    PyGrabber_methods,                 /* struct PyMethodDef *tp_methods; */\
     0,                                  /* struct PyMemberDef *tp_members; */\
     0,                                  /* struct PyGetSetDef *tp_getset; */\
     0,                                  /* struct _typeobject *tp_base; */\
@@ -143,7 +160,7 @@ PyTypeObject PyDirectorType = {         \
     0,                                  /* Py_ssize_t tp_dictoffset; */\
     0,                                  /* initproc tp_init; */\
     0,                                  /* allocfunc tp_alloc; */\
-    PyDirector_New,                     /* newfunc tp_new; */
+    PyGrabber_New,                     /* newfunc tp_new; */
 };
 
 }

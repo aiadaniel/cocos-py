@@ -4,6 +4,23 @@ import time
 SUCCESS = pycocos2d.PYSUCCESS
 FAIL = pycocos2d.PYFAIL
 
+
+def applicationDidFinishLaunching():
+    cdirector = pycocos2d.CDirector()
+    cdirector.setDisplayStats(False)
+
+
+
+
+
+
+
+
+
+
+
+
+
 def bootstrap():
     print("**********************************************")
     print("**********************************************")

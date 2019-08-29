@@ -11,6 +11,14 @@ namespace py_cocos2d
 char appLibPath[256];
 char appFilePath[256];
 
+void setScriptPath(const char *appFile,const char *appLib)
+{
+    strcpy(appFilePath,appFile);
+    strcpy(appLibPath,appLib);
+}
+
+//==============================================================
+
 static PyMethodDef module_methods[] = {
     {NULL,NULL,0,NULL},
 };
@@ -22,12 +30,6 @@ static PyModuleDef cocos_moduledef = {
     -1,                         /* m_size */
     module_methods,             /* m_methods */
 };
-
-void setScriptPath(const char *appFile,const char *appLib)
-{
-    strcpy(appFilePath,appFile);
-    strcpy(appLibPath,appLib);
-}
 
 PyObject* PyInit_pycocos2d()
 {
@@ -53,6 +55,22 @@ PyObject* PyInit_pycocos2d()
 #ifdef TEMP_DEBUG
 #define DDD PLOGD("==================================================");
 #endif
+
+void pyApplicationDidFinishLaunching() 
+{
+    DDD
+    PyObject *mMain = PyImport_ImportModule("main");
+    if (!mMain) {
+        PLOGD("=====err not main");
+        Py_Finalize();
+        return;
+    }
+    DDD
+    PyRun_SimpleString("import main");
+    DDD
+    PyRun_SimpleString("main.applicationDidFinishLaunching()");
+    DDD
+}
 
 // 主循环，相当于main
 void startup()
@@ -128,18 +146,23 @@ void startup()
     PLOGD("=====python interpreter path: %s",PyBytes_AS_STRING(sPath));
 
     // 主循环，需要提供main.py脚本
-    PyObject *mMain = PyImport_ImportModule("main");
-    if (!mMain) {
-        PLOGD("=====err not main");
-        Py_Finalize();
-        return;
-    }
-    DDD
-    PyRun_SimpleString("import main");
-    DDD
-    PyRun_SimpleString("main.bootstrap()");
-    DDD
+    // PyObject *mMain = PyImport_ImportModule("main");
+    // if (!mMain) {
+    //     PLOGD("=====err not main");
+    //     Py_Finalize();
+    //     return;
+    // }
+    // DDD
+    // PyRun_SimpleString("import main");
+    // DDD
+    // PyRun_SimpleString("main.bootstrap()");
+    // DDD
+
+    pyApplicationDidFinishLaunching();
+
 }
+
+
 
     
 }

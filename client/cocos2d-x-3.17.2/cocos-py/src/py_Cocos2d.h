@@ -5,9 +5,10 @@
 
 namespace py_cocos2d
 {
-
+void pyApplicationDidFinishLaunching();
 void setScriptPath(const char *appFile, const char *appLib);
 void startup(); 
+
 }
 
 #endif
